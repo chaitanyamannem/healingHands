@@ -12,30 +12,37 @@ angular.module('helpingHands', ['ngRoute'])
         $httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';
 
     })
-    .controller('home', function ($scope, $http) {
-        $http.get('/resource/').success(function (data) {
-            $scope.greeting = data;
-        })
+    .controller('home', function ($rootScope, $scope, $http) {
+
+        $scope.greeting = $rootScope.user;
+
+        // $http.get('/create/?email=d2@gmail.com&password=123456').success(function (data) {
+        //   console.log("user created with id " + data.id);
+        // });
+
     })
     .controller('navigation',
         function ($rootScope, $scope, $http, $location) {
 
             var authenticate = function (credentials, callback) {
-                var headers = credentials ? {
-                    authorization: "Basic " + btoa(credentials.username + ":"
-                        + credentials.password)
-                } : {};
-                $http.get('user', {headers: headers}).success(function (data) {
-                    if (data.name) {
-                        $rootScope.authenticated = true;
-                    } else {
+
+
+                if (credentials) {
+                    var getByEmailURL = '/getByEmail/?email=' + credentials.username + '&password=' + credentials.password;
+                    console.log("getByEmailURL" + getByEmailURL);
+                    $http.get(getByEmailURL).success(function (data) {
+                        if (data.id) {
+                            $rootScope.authenticated = true;
+                            $rootScope.user = data;
+                        } else {
+                            $rootScope.authenticated = false;
+                        }
+                        callback && callback();
+                    }).error(function () {
                         $rootScope.authenticated = false;
-                    }
-                    callback && callback();
-                }).error(function () {
-                    $rootScope.authenticated = false;
-                    callback && callback();
-                });
+                        callback && callback();
+                    });
+                }
 
             }
             authenticate();

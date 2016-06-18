@@ -1,7 +1,6 @@
 package in.healinghands;
 
 import java.io.IOException;
-import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -41,11 +40,6 @@ public class HealingHandsApplication {
 	    return model;
 	  }
 	
-	@RequestMapping("/user")
-	  public Principal user(Principal user) {
-	    return user;
-	  }
-	
 
 	public static void main(String[] args) {
 		SpringApplication.run(HealingHandsApplication.class, args);
@@ -54,11 +48,12 @@ public class HealingHandsApplication {
 	@Configuration
 	@Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)
 	protected static class SecurityConfiguration extends WebSecurityConfigurerAdapter {
-		@Override
+		@Override 
+		
 		protected void configure(HttpSecurity http) throws Exception {
 			http.httpBasic().and().authorizeRequests()
-					.antMatchers("/index.html", "/home.html", "/login.html", "/").permitAll().anyRequest()
-					.authenticated().and().logout().and().csrf()
+					.antMatchers("/index.html", "/home.html", "/login.html", "/").permitAll()
+					.and().logout().and().csrf()
 					.csrfTokenRepository(csrfTokenRepository()).and()
 					.addFilterAfter(csrfHeaderFilter(), CsrfFilter.class);
 		}
