@@ -16,6 +16,8 @@ buildNumber.properties
 ### Java ###
 *.class
 
+#IntelliJIdea
+*.idea
 
 
 # Package Files #
