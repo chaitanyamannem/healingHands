@@ -1,20 +1,39 @@
 
-<form role="form" ng-submit="register()">
+<form name='registerForm' role="form" ng-submit="register()">
 	<div class="form-group">
-		<label for="firstname">First Name:</label> <input type="text"
-			class="form-control" id="firstname" name="firstname" ng-model="userDetails.firstname"/>
+		<label for="firstname">First Name:</label>
+		<input type="text"
+			class="form-control" id="firstname" name="firstname" ng-model="userDetails.firstname" ng-minlength="2" ng-maxlength="32" required/>
+		<div  ng-messages="registerForm.firstname.$error" ng-if="registerForm.firstname.$dirty">
+			<div class="alert alert-danger" role="alert" ng-message="required">This field is required</div>
+			<div class="alert alert-danger" role="alert" ng-message="minlength">Message must be atleast 2 characters</div>
+			<div class="alert alert-danger" role="alert" ng-message="maxlength">Message must not exceed 32 characters</div>
+		</div>
 	</div>
 	<div class="form-group">
 		<label for="lastname">Last Name:</label> <input type="text"
-			class="form-control" id="firstname" name="lastname" ng-model="userDetails.lastname"/>
+			class="form-control" id="lastname" name="lastname" ng-model="userDetails.lastname" ng-minlength="2" ng-maxlength="32" required/>
+		<div ng-messages="registerForm.lastname.$error" ng-if="registerForm.lastname.$dirty">
+			<div class="alert alert-danger" role="alert" ng-message="required">This field is required</div>
+			<div class="alert alert-danger" role="alert" ng-message="minlength">Message must be atleast 2 characters</div>
+			<div class="alert alert-danger" role="alert" ng-message="maxlength">Message must not exceed 32 characters</div>
+		</div>
 	</div>
 	<div class="form-group">
-		<label for="email">Email:</label> <input type="text"
-			class="form-control" id="email" name="email" ng-model="userDetails.email"/>
+		<label for="email">Email:</label> <input type="email"
+			class="form-control" id="email" name="email" ng-model="userDetails.email" required/>
+		<div ng-messages="registerForm.email.$error" ng-if="registerForm.email.$dirty">
+			<div class="alert alert-danger" role="alert" ng-message="required">This field is required</div>
+			<div class="alert alert-danger" role="alert" ng-message="email">Please enter a valid email address</div>
+		</div>
 	</div>
 	<div class="form-group">
 		<label for="password">Password:</label> <input type="password"
-			class="form-control" id="password" name="password" ng-model="userDetails.password"/>
+			class="form-control" id="password" name="password" ng-model="userDetails.password" ng-minlength="6" required/>
+		<div ng-messages="registerForm.password.$error" ng-if="registerForm.password.$dirty">
+			<div class="alert alert-danger" role="alert" ng-message="required">This field is required</div>
+			<div class="alert alert-danger" role="alert" ng-message="minlength">Message must be atleast 6 characters</div>
+		</div>
 	</div>
 	<button type="submit" class="btn btn-primary">Submit</button>
 </form>

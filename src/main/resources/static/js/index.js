@@ -1,4 +1,4 @@
-angular.module('helpingHands', ['ngRoute'])
+angular.module('helpingHands', ['ngRoute','ngMessages'])
     .config(function ($routeProvider, $httpProvider) {
 
         $routeProvider.when('/', {
