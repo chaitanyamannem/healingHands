@@ -1,7 +1,9 @@
 package in.healinghands.controllers;
 
 import in.healinghands.dao.AuthenticationDAO;
+import in.healinghands.dao.MemberDAO;
 import in.healinghands.model.Authentication;
+import in.healinghands.model.Member;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,18 +42,21 @@ public class AuthenticationController {
 	 */
 	@RequestMapping("/create")
 	@ResponseBody
-	public Map<String, Object> create(String email, String password) {
+	public Map<String, Object> create(String email, String password, String firstName, String lastName) {
 		Authentication authentication = null;
+		Member member = null;
 		Map<String, Object> model = new HashMap<String, Object>();
 		try {
 			authentication = new Authentication(email, password);
-			authDAO.save(authentication);
+			member = new Member(firstName, lastName,
+					authDAO.save(authentication));
+			memberDAO.save(member);
 		} catch (Exception ex) {
 			model.put("id", ex.toString());
 			return model;
 		}
 		model.put("id", authentication.getId());
-		model.put("content", "Welcome " + authentication.getEmail());
+		model.put("content", "Welcome " + member.getFirstName());
 		return model;
 	}
 
@@ -140,5 +145,7 @@ public class AuthenticationController {
 
 	@Autowired
 	private AuthenticationDAO authDAO;
+	@Autowired
+	private MemberDAO memberDAO;
 
 }

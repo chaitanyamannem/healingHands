@@ -7,6 +7,9 @@ angular.module('helpingHands', ['ngRoute'])
         }).when('/login', {
             templateUrl: 'login.html',
             controller: 'navigation'
+        }).when('/register', {
+            templateUrl: 'register.html',
+            controller: 'register'
         }).otherwise('/');
 
         $httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';
@@ -16,9 +19,21 @@ angular.module('helpingHands', ['ngRoute'])
 
         $scope.greeting = $rootScope.user;
 
-        // $http.get('/create/?email=d2@gmail.com&password=123456').success(function (data) {
-        //   console.log("user created with id " + data.id);
-        // });
+    })
+    .controller('register', function ($scope,$http) {
+    		$scope.userDetails = {};
+    		$scope.register = function () {
+
+                var createURL = '/create/?email=' + $scope.userDetails.email
+                    + '&password=' + $scope.userDetails.password
+                    + '&firstName=' + $scope.userDetails.firstname
+                    + '&lastName=' + $scope.userDetails.lastname;
+                $http.get(createURL).success(function (data) {
+                    console.log("user " + data.content + "created with id " + data.id);
+                });
+          
+        };
+    	    
 
     })
     .controller('navigation',
