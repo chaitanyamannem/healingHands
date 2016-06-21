@@ -15,22 +15,25 @@ angular.module('helpingHands', ['ngRoute'])
         $httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';
 
     })
-    .controller('home', function ($rootScope, $scope, $http) {
+    .controller('home', function ($rootScope, $scope) {
 
         $scope.greeting = $rootScope.user;
 
     })
-    .controller('register', function ($scope,$http) {
-    		$scope.userDetails = {};
-    		$scope.register = function () {
+    .controller('register', function ($rootScope, $scope, $http, $location) {
+        $scope.userDetails = {};
+        $scope.register = function () {
 
-                var createURL = '/create/?email=' + $scope.userDetails.email
-                    + '&password=' + $scope.userDetails.password
-                    + '&firstName=' + $scope.userDetails.firstname
-                    + '&lastName=' + $scope.userDetails.lastname;
-                $http.get(createURL).success(function (data) {
-                    console.log("user " + data.content + "created with id " + data.id);
-                });
+            var createURL = '/create/?email=' + $scope.userDetails.email
+                + '&password=' + $scope.userDetails.password
+                + '&firstName=' + $scope.userDetails.firstname
+                + '&lastName=' + $scope.userDetails.lastname;
+            $http.get(createURL).success(function (data) {
+                $rootScope.user = data;
+                $rootScope.authenticated = true;
+                $location.path("/");
+
+            });
           
         };
     	    
