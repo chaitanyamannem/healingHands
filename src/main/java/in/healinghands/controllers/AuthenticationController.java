@@ -111,6 +111,24 @@ public class AuthenticationController {
 		}
 		return model;
 	}
+	
+	@RequestMapping("/emailAvailable")
+	@ResponseBody
+	public Map<String, Object> emailAvailable(String email) {
+		Map<String, Object> model = new HashMap<String, Object>();
+		boolean hasEmail = false;
+		try {
+			Authentication auth = authDAO.findByEmail(email);
+			if (auth != null) {
+				hasEmail = true;
+			}
+		} catch (Exception ex) {
+			model.put("error", ex.toString());
+			return model;
+		}
+		model.put("hasEmail", hasEmail);
+		return model;
+	}
 
 	//
 	// /**

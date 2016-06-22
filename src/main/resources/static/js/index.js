@@ -1,4 +1,4 @@
-angular.module('helpingHands', ['ngRoute','ngMessages'])
+angular.module('helpingHands', ['ngRoute','ngMessages','ui.bootstrap'])
     .config(function ($routeProvider, $httpProvider) {
 
         $routeProvider.when('/', {
@@ -20,8 +20,41 @@ angular.module('helpingHands', ['ngRoute','ngMessages'])
         $scope.greeting = $rootScope.user;
 
     })
-    .controller('register', function ($rootScope, $scope, $http, $location) {
+    .controller('register', function ($rootScope, $scope, $http, $location, $timeout) {
         $scope.userDetails = {};
+        $scope.formErrors = {};
+        $scope.formErrors.hasEmail = false;
+        $scope.resetEmailAvailableAlert = function(){
+            //reset email already taken alert
+            $scope.formErrors.hasEmail = false;
+        };
+
+
+        $scope.emailAvailable = function () {
+
+            var emailAvailableURL = '/emailAvailable/?email=' + $scope.userDetails.email;
+
+
+            $http.get(emailAvailableURL).success(function (data) {
+                $scope.formErrors.hasEmail = false;
+                if (data.hasEmail) {
+                    $scope.formErrors.email = 'The Email ' + $scope.userDetails.email + ' is already taken';
+                    $scope.formErrors.hasEmail = true;
+                    $scope.userDetails.email = '';
+                }
+                $timeout(function () {
+                    $scope.resetEmailAvailableAlert();
+                }, 5000);
+
+            }).error(function () {
+                $scope.formErrors.email = 'Please try after some time';
+            });
+
+
+
+
+        };
+
         $scope.register = function () {
 
             var createURL = '/create/?email=' + $scope.userDetails.email
@@ -33,6 +66,8 @@ angular.module('helpingHands', ['ngRoute','ngMessages'])
                 $rootScope.authenticated = true;
                 $location.path("/");
 
+            }).error(function () {
+                console.log("server error");
             });
           
         };
