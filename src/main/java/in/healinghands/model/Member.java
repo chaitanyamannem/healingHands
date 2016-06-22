@@ -1,6 +1,9 @@
 package in.healinghands.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -23,18 +26,28 @@ public class Member {
 	
 	private String lastName;
 	
+	@Enumerated(EnumType.STRING)
+	//@Column(columnDefinition="varchar2(10)")
+	private MemberType memberType;
+	
 	@OneToOne
 	private Authentication authentication;
+	
+	public static enum MemberType {
+	    HEALER,PATIENT;
+	  }
 	
 	public Member() {
 		
 	}
 	
 	public Member(String firstName, String lastName,
-			Authentication authentication) {
+			Authentication authentication, MemberType memberType) {
 		this.firstName = firstName;
 		this.lastName  = lastName;
 		this.authentication = authentication;
+		this.memberType = memberType;
+		
 	}
 
 	public long getId() {
@@ -67,6 +80,14 @@ public class Member {
 
 	public void setAuthentication(Authentication authentication) {
 		this.authentication = authentication;
+	}
+
+	public MemberType getMemberType() {
+		return memberType;
+	}
+
+	public void setMemberType(MemberType memberType) {
+		this.memberType = memberType;
 	}
 	
 	

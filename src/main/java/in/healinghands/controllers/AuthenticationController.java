@@ -4,6 +4,7 @@ import in.healinghands.dao.AuthenticationDAO;
 import in.healinghands.dao.MemberDAO;
 import in.healinghands.model.Authentication;
 import in.healinghands.model.Member;
+import in.healinghands.model.Member.MemberType;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,14 +43,20 @@ public class AuthenticationController {
 	 */
 	@RequestMapping("/create")
 	@ResponseBody
-	public Map<String, Object> create(String email, String password, String firstName, String lastName) {
+	public Map<String, Object> create(String email, String password, String firstName, String lastName, String type) {
 		Authentication authentication = null;
 		Member member = null;
+		MemberType memberType = null;
+		if(MemberType.HEALER.name().equals(type)){
+			memberType = MemberType.HEALER;
+		} else if(MemberType.PATIENT.name().equals(type)){
+			memberType = MemberType.PATIENT;
+		}
 		Map<String, Object> model = new HashMap<String, Object>();
 		try {
 			authentication = new Authentication(email, password);
 			member = new Member(firstName, lastName,
-					authDAO.save(authentication));
+					authDAO.save(authentication), memberType);
 			memberDAO.save(member);
 		} catch (Exception ex) {
 			model.put("id", ex.toString());

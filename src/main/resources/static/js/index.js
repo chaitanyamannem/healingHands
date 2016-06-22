@@ -56,11 +56,11 @@ angular.module('helpingHands', ['ngRoute','ngMessages','ui.bootstrap'])
         };
 
         $scope.register = function () {
-
             var createURL = '/create/?email=' + $scope.userDetails.email
                 + '&password=' + $scope.userDetails.password
                 + '&firstName=' + $scope.userDetails.firstname
-                + '&lastName=' + $scope.userDetails.lastname;
+                + '&lastName=' + $scope.userDetails.lastname
+                + '&type=' + $scope.userDetails.memberType;
             $http.get(createURL).success(function (data) {
                 $rootScope.user = data;
                 $rootScope.authenticated = true;
@@ -69,7 +69,7 @@ angular.module('helpingHands', ['ngRoute','ngMessages','ui.bootstrap'])
             }).error(function () {
                 console.log("server error");
             });
-          
+
         };
     	    
 

@@ -1,6 +1,10 @@
 
 <form name='registerForm' role="form" ng-submit="register()">
 	<div class="form-group">
+		<label  for="patient" class="radio-inline"><input id="patient" type="radio" ng-model="userDetails.memberType" value="PATIENT" name="memberType" required>Patient</label>
+		<label for="healer" class="radio-inline"><input id="healer" type="radio" ng-model="userDetails.memberType" value="HEALER" name="memberType" required>Healer</label>
+	</div>
+	<div class="form-group">
 		<label for="firstname">First Name:</label>
 		<input type="text"
 			class="form-control" id="firstname" name="firstname" ng-model="userDetails.firstname" ng-minlength="2" ng-maxlength="32" required/>
