@@ -1,5 +1,7 @@
 angular.module('helpingHands', ['ngRoute','ngMessages','ui.bootstrap'])
-    .config(function ($routeProvider, $httpProvider) {
+    .config(function ($routeProvider, $httpProvider,$compileProvider) {
+    
+    $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|file|ftp|blob):|data:image\//);
 
         $routeProvider.when('/', {
             templateUrl: 'home.html',
@@ -18,7 +20,7 @@ angular.module('helpingHands', ['ngRoute','ngMessages','ui.bootstrap'])
     .controller('home', function ($rootScope, $scope) {
 
         $scope.greeting = $rootScope.user;
-
+         
     })
     .controller('register', function ($rootScope, $scope, $http, $location, $timeout) {
         $scope.userDetails = {};

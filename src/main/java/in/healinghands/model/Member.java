@@ -1,12 +1,12 @@
 package in.healinghands.model;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -27,8 +27,11 @@ public class Member {
 	private String lastName;
 	
 	@Enumerated(EnumType.STRING)
-	//@Column(columnDefinition="varchar2(10)")
 	private MemberType memberType;
+	
+	//current max image size is 1048576 bytes or 1.048576
+	@Lob
+	private byte[] image;
 	
 	@OneToOne
 	private Authentication authentication;
@@ -47,6 +50,7 @@ public class Member {
 		this.lastName  = lastName;
 		this.authentication = authentication;
 		this.memberType = memberType;
+		
 		
 	}
 
@@ -89,6 +93,15 @@ public class Member {
 	public void setMemberType(MemberType memberType) {
 		this.memberType = memberType;
 	}
+
+	public byte[] getImage() {
+		return image;
+	}
+
+	public void setImage(byte[] image) {
+		this.image = image;
+	}
+	
 	
 	
 

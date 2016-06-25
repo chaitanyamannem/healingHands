@@ -14,8 +14,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * A class to test interactions with the MySQL database using the
@@ -41,7 +44,7 @@ public class AuthenticationController {
 	 *            User's name
 	 * @return A string describing if the user is succesfully created or not.
 	 */
-	@RequestMapping("/create")
+	@RequestMapping(value = "/create", method = RequestMethod.GET)
 	@ResponseBody
 	public Map<String, Object> create(String email, String password, String firstName, String lastName, String type) {
 		Authentication authentication = null;
@@ -64,6 +67,27 @@ public class AuthenticationController {
 		}
 		model.put("id", authentication.getId());
 		model.put("content", "Welcome " + member.getFirstName());
+		return model;
+	}
+    
+	@RequestMapping(value = "/uploadPhoto/{email:.+}", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> uploadPhoto(@PathVariable("email")String email, MultipartFile photo) {
+
+		Authentication auth = authDAO.findByEmail(email);
+		Map<String, Object> model = new HashMap<String, Object>();
+		Member member = null;
+		try {
+			member = memberDAO.findByAuthentication(auth);
+			member.setImage(photo.getBytes());
+			memberDAO.save(member);
+
+		} catch (Exception ex) {
+			model.put("id", ex.toString());
+			return model;
+		}
+		model.put("id", member.getId());
+		model.put("content", member.getImage());
 		return model;
 	}
 
@@ -100,8 +124,10 @@ public class AuthenticationController {
 		String authId;
 		String content;
 		boolean userAuthorized = false;
+		Member member = null;
 		try {
 			Authentication auth = authDAO.findByEmail(email);
+			member = memberDAO.findByAuthentication(auth);
 			log.info("user = " + auth.getEmail());
 			userAuthorized = new BCryptPasswordEncoder().matches(password,
 					auth.getPassword());
@@ -115,6 +141,7 @@ public class AuthenticationController {
 		if (userAuthorized) {
 			model.put("id", authId);
 			model.put("content", "Welcome " + content);
+			model.put("photo", member.getImage());
 		}
 		return model;
 	}

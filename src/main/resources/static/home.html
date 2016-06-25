@@ -1,7 +1,8 @@
 <h1>Greeting</h1>
 <div ng-show="authenticated">
 	<p>The ID is {{greeting.id}}</p>
-	<p>The content is {{greeting.content}}</p>
+	<p>The content is {{greeting.content}}</p>    
+    <img ng-src="data:image/JPEG;base64,{{greeting.photo}}">
 </div>
 <div  ng-show="!authenticated">
 	<p>Login to see your greeting</p>
