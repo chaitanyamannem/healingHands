@@ -21,8 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * A class to test interactions with the MySQL database using the
- * AuthenticationDAO class.
+ * 
  *
  * @author chaitanya
  */
@@ -111,7 +110,7 @@ public class AuthenticationController {
 	// }
 	//
 	/**
-	 * /get-by-email --> Return the id for the user having the passed email.
+	 * /get-by-email(login) --> Return the id for the user having the passed email.
 	 * 
 	 * @param email
 	 *            The email to search in the database.
@@ -125,8 +124,9 @@ public class AuthenticationController {
 		String content;
 		boolean userAuthorized = false;
 		Member member = null;
+		Authentication auth = null;
 		try {
-			Authentication auth = authDAO.findByEmail(email);
+			auth = authDAO.findByEmail(email);
 			member = memberDAO.findByAuthentication(auth);
 			log.info("user = " + auth.getEmail());
 			userAuthorized = new BCryptPasswordEncoder().matches(password,
@@ -142,6 +142,7 @@ public class AuthenticationController {
 			model.put("id", authId);
 			model.put("content", "Welcome " + content);
 			model.put("photo", member.getImage());
+			model.put("authToken", auth.getAuthToken());
 		}
 		return model;
 	}

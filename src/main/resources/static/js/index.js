@@ -1,18 +1,22 @@
-angular.module('helpingHands', ['ngRoute','ngMessages','ui.bootstrap'])
-    .config(function ($routeProvider, $httpProvider,$compileProvider) {
+angular.module('helpingHands', ['ui.router','ngMessages','ui.bootstrap'])
+    .config(function ($stateProvider, $httpProvider,$compileProvider) {
     
     $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|file|ftp|blob):|data:image\//);
 
-        $routeProvider.when('/', {
+        $stateProvider.state('index', {
+            url: '/',
             templateUrl: 'home.html',
             controller: 'home'
-        }).when('/login', {
+        }).state('login', {
             templateUrl: 'login.html',
             controller: 'navigation'
-        }).when('/register', {
+        }).state('register', {
             templateUrl: 'register.html',
             controller: 'register'
-        }).otherwise('/');
+        }).state('healingRequest', {
+            templateUrl: 'healRequest.html',
+            controller: 'healingRequest'
+        });
 
         $httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';
 
@@ -22,7 +26,23 @@ angular.module('helpingHands', ['ngRoute','ngMessages','ui.bootstrap'])
         $scope.greeting = $rootScope.user;
          
     })
+    .controller('healingRequest', function ($rootScope, $scope, $http) {
+    console.log("healingRequest controller");
+    var healingRequestURL = '/healingRequest/?authToken=' + $rootScope.user.authToken;
+    console.log("healingRequest = " + healingRequestURL );       
+    $http.get(healingRequestURL).success(function (data) {
+                $scope.user = data;
+                
+
+            }).error(function () {
+                console.log("server error");
+            });
+
+        $scope.user = $rootScope.user;
+         
+    })
     .controller('register', function ($rootScope, $scope, $http, $location, $timeout) {
+    
         $scope.userDetails = {};
         $scope.formErrors = {};
         $scope.formErrors.hasEmail = false;
@@ -77,7 +97,7 @@ angular.module('helpingHands', ['ngRoute','ngMessages','ui.bootstrap'])
 
     })
     .controller('navigation',
-        function ($rootScope, $scope, $http, $location) {
+        function ($rootScope, $scope, $http, $state) {
 
             var authenticate = function (credentials, callback) {
 
@@ -104,21 +124,25 @@ angular.module('helpingHands', ['ngRoute','ngMessages','ui.bootstrap'])
             $scope.credentials = {};
             $scope.login = function () {
                 authenticate($scope.credentials, function () {
-                    if ($rootScope.authenticated) {
-                        $location.path("/");
+                    if ($rootScope.authenticated) {          
                         $scope.error = false;
-                    } else {
-                        $location.path("/login");
+                        $state.go('index');
+                    } else {                     
                         $scope.error = true;
+                        $state.go('login');
                     }
                 });
             };
             $scope.logout = function () {
-                $http.post('logout', {}).success(function () {
-                    $rootScope.authenticated = false;
-                    $location.path("/");
-                }).error(function (data) {
-                    $rootScope.authenticated = false;
-                });
+                $rootScope.authenticated = false;
+                $state.go('login');
+                //TODO: Server implementation
+//                $http.post('logout', {}).success(function () {
+//                    $rootScope.authenticated = false;
+//                    $state.go('login');
+//                }).error(function (data) {
+//                    $rootScope.authenticated = false;
+//                    $rootScope.user = {};
+//                });
             }
         });

@@ -19,4 +19,6 @@ public interface AuthenticationDAO extends CrudRepository<Authentication, Long> 
 	   * automagically generated from its signature by Spring Data JPA.
 	   */
 	public Authentication findByEmail(String email);
+	
+	public Authentication findByAuthToken(String authToken);
 }

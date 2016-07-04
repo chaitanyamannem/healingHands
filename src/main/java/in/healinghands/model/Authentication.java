@@ -28,6 +28,8 @@ public class Authentication {
 	private String password;
 
 	private String facebookUserId;
+	
+	private String authToken;
 
 	// Public methods
 
@@ -41,6 +43,11 @@ public class Authentication {
 	public Authentication(String email, String password) {
 		this.email = email;
 		this.password = new BCryptPasswordEncoder().encode(password);
+		/* Currently we will generate auth token when user registers 
+		 * later we can think of generating or expiring it based
+		 * on login and logout of user.
+		 * */
+		this.authToken = new BCryptPasswordEncoder().encode(email);
 	}
 
 	public Authentication(String email, String password,
@@ -48,6 +55,11 @@ public class Authentication {
 		this.email = email;
 		this.password = new BCryptPasswordEncoder().encode(password);
 		this.facebookUserId = facebookUserId;
+		/* Currently we will generate auth token when user registers 
+		 * later we can think of generating or expiring it based
+		 * on login and logout of user.
+		 * */
+		this.authToken = new BCryptPasswordEncoder().encode(email);
 	}
 
 	public long getId() {
@@ -83,5 +95,13 @@ public class Authentication {
 	public void setFacebookUserId(String facebookUserId) {
 		this.facebookUserId = facebookUserId;
 	}
+
+	public String getAuthToken() {
+		return authToken;
+	}
+
+	public void setAuthToken(String authToken) {
+		this.authToken = authToken;
+	}	
 
 }
