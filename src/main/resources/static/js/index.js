@@ -21,24 +21,55 @@ angular.module('helpingHands', ['ui.router','ngMessages','ui.bootstrap'])
         $httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';
 
     })
+    .directive('fileModel', ['$parse', function ($parse) {
+        return {
+            restrict: 'A',
+            link: function(scope, element, attrs) {
+                var model = $parse(attrs.fileModel);
+                var modelSetter = model.assign;
+
+                element.bind('change', function(){
+                    scope.$apply(function(){
+                        modelSetter(scope, element[0].files[0]);
+                    });
+                });
+            }
+        };
+    }])
     .controller('home', function ($rootScope, $scope) {
 
         $scope.greeting = $rootScope.user;
          
     })
     .controller('healingRequest', function ($rootScope, $scope, $http) {
-    console.log("healingRequest controller");
-    var healingRequestURL = '/healingRequest/?authToken=' + $rootScope.user.authToken;
-    console.log("healingRequest = " + healingRequestURL );       
-    $http.get(healingRequestURL).success(function (data) {
-                $scope.user = data;
-                
-
-            }).error(function () {
-                console.log("server error");
-            });
-
-        $scope.user = $rootScope.user;
+        
+        $scope.healRequest = {};
+        $scope.showDisclaimer = false;
+        $scope.openDisclaimer = function(){
+            $scope.showDisclaimer = true;            
+        };    
+        $scope.closeDisclaimerAlert = function(){
+            $scope.showDisclaimer = false;
+        }    
+        $scope.msg = "Pranic Healing is not intended to replace orthodox medicine but rather to complement it. \n If an ailment is severe or symptoms persist, please consult immediately a medical doctor and a reputable Pranic Healer.";
+    
+        $scope.healRequest = function(){
+            
+            console.log($scope.healRequest.description);
+            console.log($scope.healRequest.isEmergency);
+        };
+    
+//    var healingRequestURL = '/healingRequest/?authToken=' + $rootScope.user.authToken;
+//    console.log("healingRequest = " + healingRequestURL );       
+//    $http.get(healingRequestURL).success(function (data) {
+//                $scope.user = data;
+//                
+//
+//            }).error(function () {
+//                console.log("server error");
+//            });
+//
+//        $scope.user = $rootScope.user;
          
     })
     .controller('register', function ($rootScope, $scope, $http, $location, $timeout) {

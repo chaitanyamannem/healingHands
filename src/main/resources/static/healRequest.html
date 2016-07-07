@@ -1,2 +1,44 @@
-<h1>Healing Request</h1>
-<p>The user is {{user.firstName}} {{user.lastName}}</p>
+<h1>Healing Request Form</h1>
+<form name='healRequestForm' role="form" ng-submit="healRequest()">
+	
+	<div class="form-group">
+		<label for="title">Title:</label>
+		<input type="text"
+			class="form-control" placeholder="eg: Suffering from severe headache " id="title" name="title" ng-model="healRequest.title" ng-minlength="10" ng-maxlength="100" required/>
+		<div  ng-messages="healRequestForm.title.$error" ng-if="healRequestForm.title.$dirty">
+			<div class="alert alert-danger" role="alert" ng-message="required">This field is required</div>
+			<div class="alert alert-danger" role="alert" ng-message="minlength">Message must be atleast 10 characters</div>
+			<div class="alert alert-danger" role="alert" ng-message="maxlength">Message must not exceed 100 characters</div>
+		</div>
+	</div>
+    <div class="form-group">
+        <label for="description">Description:</label>
+<!--        <p>TODO: Error handling for description</p>-->
+        <textarea ng-model="healRequest.description" class="form-control" placeholder="Add details like patient name, age, gender and how long he/she is suffering from the disease." rows="4"></textarea>
+    </div>
+    <div class="form-group">
+        <label class="btn btn-danger">
+            <input type="checkbox" ng-model="healRequest.isEmergency" autocomplete="off" checked> is Emergency
+        </label>
+    </div>
+    <div class="form-group">
+        <label for="patientPhoto">Patient Photo:</label>
+        <input type="file" class="form-control" file-model="patientPhoto"/>
+    </div>
+    <div class="form-group">
+        <label for="underMedication">Under Medication:</label>
+		<label  for="underMedicationYes" class="radio-inline"><input id="underMedicationYes" type="radio" ng-model="healRequest.underMedication" value="true" name="underMedication" required>Yes</label>
+		<label for="underMedicationNo" class="radio-inline"><input id="underMedicationNo" type="radio" ng-model="healRequest.underMedication" ng-click="openDisclaimer()" value="false" name="underMedication" required>No</label>
+	</div>
+    <uib-alert  type="warning" ng-if="showDisclaimer" close="closeDisclaimerAlert()">{{msg}}</uib-alert>
+    <div ng-if="healRequest.underMedication" class="form-group">
+        <label for="medicationDetails">Medication Details:</label>
+<!--        <p>TODO: Error handling for description</p>-->
+        <textarea ng-model="healRequest.medicationDetails" class="form-control" rows="4" placeholder="Medication details enables the healer to better understand the case. Incase you have medical documents like x-ray, reports etc.. we kindly request you to upload in Google Drive or any cloud storage and give the links here."></textarea>
+    </div>
+    
+	
+	
+	
+	<button type="submit" class="btn btn-primary">Submit</button>
+</form>
