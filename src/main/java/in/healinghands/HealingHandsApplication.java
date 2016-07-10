@@ -1,5 +1,10 @@
 package in.healinghands;
 
+import in.healinghands.dao.AuthenticationDAO;
+import in.healinghands.dao.MemberDAO;
+import in.healinghands.model.Authentication;
+import in.healinghands.model.Member;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,6 +17,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
@@ -31,6 +37,8 @@ import org.springframework.web.util.WebUtils;
 @SpringBootApplication
 @RestController
 public class HealingHandsApplication {
+		
+	private static Member loggedInMember;
 	
 	@RequestMapping("/resource")
 	  public Map<String,Object> home() {
@@ -40,7 +48,11 @@ public class HealingHandsApplication {
 	    return model;
 	  }
 	
-
+	public static Member getMember() {
+		return loggedInMember;
+	}
+	
+	
 	public static void main(String[] args) {
 		SpringApplication.run(HealingHandsApplication.class, args);
 	}
@@ -48,8 +60,13 @@ public class HealingHandsApplication {
 	@Configuration
 	@Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)
 	protected static class SecurityConfiguration extends WebSecurityConfigurerAdapter {
-		@Override 
 		
+		@Autowired
+		private AuthenticationDAO authDAO;
+		@Autowired
+		private MemberDAO memberDAO;
+		
+		@Override 
 		protected void configure(HttpSecurity http) throws Exception {
 			http.httpBasic().and().authorizeRequests()
 					.antMatchers("/index.html", "/home.html", "/login.html", "/").permitAll()
@@ -64,6 +81,12 @@ public class HealingHandsApplication {
 				protected void doFilterInternal(HttpServletRequest request,
 						HttpServletResponse response, FilterChain filterChain)
 						throws ServletException, IOException {
+					String authToken = request.getHeader("X-Auth-Token");
+					if(authToken != null){
+						Authentication authentication = authDAO.findByAuthToken(authToken);
+						loggedInMember = memberDAO.findByAuthentication(authentication);
+					}
+					
 					CsrfToken csrf = (CsrfToken) request.getAttribute(CsrfToken.class
 							.getName());
 					if (csrf != null) {
@@ -86,5 +109,9 @@ public class HealingHandsApplication {
 			repository.setHeaderName("X-XSRF-TOKEN");
 			return repository;
 		}
+		
+		
 	}
+	
+	
 }

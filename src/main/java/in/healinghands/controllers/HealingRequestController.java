@@ -1,8 +1,11 @@
 package in.healinghands.controllers;
 
+import in.healinghands.HealingHandsApplication;
 import in.healinghands.dao.AuthenticationDAO;
+import in.healinghands.dao.HealingRequestDAO;
 import in.healinghands.dao.MemberDAO;
-import in.healinghands.model.Authentication;
+import in.healinghands.form.HealingRequestForm;
+import in.healinghands.model.HealingRequest;
 import in.healinghands.model.Member;
 
 import java.util.HashMap;
@@ -10,6 +13,8 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -21,22 +26,37 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class HealingRequestController {
 	
-	@RequestMapping(value = "/healingRequest", method = RequestMethod.GET)
+	@Autowired
+	private HealingRequestDAO healingRequestDAO;
+	
+	@RequestMapping(value = "/healingRequest", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> healingRequest(String authToken) {
-		Authentication authentication = null;
-		Member member = null;
-		
+	public Map<String, Object> healingRequest(@javax.validation.Valid @ModelAttribute("providerAccountForm")
+	HealingRequestForm healingRequestForm, BindingResult result) {
 		Map<String, Object> model = new HashMap<String, Object>();
-		try {
-			authentication = authDAO.findByAuthToken(authToken);
-			member = memberDAO.findByAuthentication(authentication);
-		} catch (Exception ex) {
-			model.put("id", ex.toString());
+		healingRequestForm.validate(healingRequestForm, result);
+		if(result.hasErrors()){
+			model.put("error", result.getFieldErrors());
 			return model;
 		}
-		model.put("firstName", member.getFirstName());
-		model.put("lastName", "Welcome " + member.getLastName());
+
+		Member member = HealingHandsApplication.getMember();
+
+		if (member == null) {
+			model.put("error", "member is null");
+			return model;
+		}
+		
+		HealingRequest healingRequest = new HealingRequest(
+				healingRequestForm.getTitle(),
+				healingRequestForm.getDescription(),
+				healingRequestForm.isEmergency(),
+				healingRequestForm.isUnderMedication(),
+				healingRequestForm.getMedicationDetails(), member);
+		healingRequestDAO.save(healingRequest);
+		
+		model.put("id", healingRequest.getId());
+		
 		return model;
 	}
 	

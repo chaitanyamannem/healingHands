@@ -45,31 +45,57 @@ angular.module('helpingHands', ['ui.router','ngMessages','ui.bootstrap'])
         
         $scope.healRequest = {};
         $scope.showDisclaimer = false;
+        $scope.showMedicationDetails = false;
+        $scope.setShowMedicationDetails = function(){
+            $scope.showMedicationDetails = true;
+        }
         $scope.openDisclaimer = function(){
-            $scope.showDisclaimer = true;            
+            $scope.showDisclaimer = true;
+            $scope.showMedicationDetails = false;
         };    
         $scope.closeDisclaimerAlert = function(){
             $scope.showDisclaimer = false;
         }    
-        $scope.msg = "Pranic Healing is not intended to replace orthodox medicine but rather to complement it. \n If an ailment is severe or symptoms persist, please consult immediately a medical doctor and a reputable Pranic Healer.";
+        $scope.msg = "Pranic Healing is not intended to replace orthodox medicine but rather to complement it. \n If an ailment is severe or symptoms persist, please consult immediately a medical doctor.";
     
         $scope.healRequest = function(){
             
-            console.log($scope.healRequest.description);
-            console.log($scope.healRequest.isEmergency);
+            if(typeof $scope.healRequest.emergency == "undefined"){
+               $scope.healRequest.emergency = false; 
+            }
+            if(typeof $scope.healRequest.medicationDetails == "undefined"){
+               $scope.healRequest.medicationDetails = null; 
+            }
+            
+            var formData = new FormData();
+            formData.append('title',$scope.healRequest.title);
+            formData.append('description',$scope.healRequest.description);
+            formData.append('patientPhoto', $scope.patientPhoto);
+            formData.append('emergency',$scope.healRequest.emergency);
+            formData.append('underMedication',$scope.healRequest.underMedication);
+            formData.append('medicationDetails',$scope.healRequest.medicationDetails);
+            
+    
+            var request = {
+                    method: 'POST',
+                    url: '/healingRequest',
+                    data: formData,
+                    headers: {
+                        'Content-Type': undefined,
+                        'X-Auth-Token': $rootScope.user.authToken
+                    }
+                };
+
+    
+        
+            $http(request)
+            .success(function(){
+            })
+            .error(function(){
+            });
+
         };
     
-//    var healingRequestURL = '/healingRequest/?authToken=' + $rootScope.user.authToken;
-//    console.log("healingRequest = " + healingRequestURL );       
-//    $http.get(healingRequestURL).success(function (data) {
-//                $scope.user = data;
-//                
-//
-//            }).error(function () {
-//                console.log("server error");
-//            });
-//
-//        $scope.user = $rootScope.user;
          
     })
     .controller('register', function ($rootScope, $scope, $http, $location, $timeout) {
