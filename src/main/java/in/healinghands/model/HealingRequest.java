@@ -1,6 +1,8 @@
 package in.healinghands.model;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -25,6 +27,13 @@ public class HealingRequest {
 	private String medicationDetails;
 	@ManyToOne
 	private Member member;
+	@Enumerated(EnumType.STRING)
+	private Status status;
+	
+	
+	public static enum Status {
+	    POSTED;
+	  }
 	
 	public HealingRequest(String title, String description, boolean emergency,
 			boolean underMedication, String medicationDetails, Member member) {
@@ -34,6 +43,11 @@ public class HealingRequest {
 		this.underMedication = underMedication;
 		this.medicationDetails = medicationDetails;
 		this.member = member;
+		this.status = Status.POSTED;
+	}
+	
+	public HealingRequest() {
+		
 	}
 	
 	public String getTitle() {

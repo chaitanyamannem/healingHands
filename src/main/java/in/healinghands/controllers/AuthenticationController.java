@@ -66,6 +66,7 @@ public class AuthenticationController {
 		}
 		model.put("id", authentication.getId());
 		model.put("content", "Welcome " + member.getFirstName());
+		model.put("authToken", authentication.getAuthToken());
 		return model;
 	}
     
@@ -87,6 +88,7 @@ public class AuthenticationController {
 		}
 		model.put("id", member.getId());
 		model.put("content", member.getImage());
+		
 		return model;
 	}
 

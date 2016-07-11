@@ -12,6 +12,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -26,8 +29,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class HealingRequestController {
 	
-	@Autowired
-	private HealingRequestDAO healingRequestDAO;
+	
 	
 	@RequestMapping(value = "/healingRequest", method = RequestMethod.POST)
 	@ResponseBody
@@ -60,9 +62,24 @@ public class HealingRequestController {
 		return model;
 	}
 	
+	@RequestMapping("/healingRequests")
+	@ResponseBody
+	public Map<String, Object> healingRequests(int pageNumber, int pageSize) {
+		Map<String, Object> model = new HashMap<String, Object>();
+		Pageable pageable = new PageRequest(pageNumber, pageSize);
+		Page<HealingRequest> page = healingRequestDAO.findAll(pageable);
+		model.put("healingRequests", page.getContent());
+		return model;
+	}
+	
+	
+
+	
 	@Autowired
 	private AuthenticationDAO authDAO;
 	@Autowired
 	private MemberDAO memberDAO;
+	@Autowired
+	private HealingRequestDAO healingRequestDAO;
 
 }

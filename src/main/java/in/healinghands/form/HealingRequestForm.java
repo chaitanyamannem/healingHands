@@ -20,8 +20,7 @@ public class HealingRequestForm extends BaseForm {
 	private boolean underMedication;	
 	private String medicationDetails;
 	private MultipartFile patientPhoto;
-//	// TODO refactor to header level
-//	private String authToken;
+
 
 	@Override
 	public boolean supports(Class<?> clazz) {
