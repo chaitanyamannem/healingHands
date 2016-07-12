@@ -67,8 +67,10 @@ public class HealingRequestController {
 	public Map<String, Object> healingRequests(int pageNumber, int pageSize) {
 		Map<String, Object> model = new HashMap<String, Object>();
 		Pageable pageable = new PageRequest(pageNumber, pageSize);
-		Page<HealingRequest> page = healingRequestDAO.findAll(pageable);
+		Page<HealingRequest> page = healingRequestDAO.findAll(pageable);		
 		model.put("healingRequests", page.getContent());
+		//TODO refactor to a separate api call
+		model.put("count", healingRequestDAO.count());
 		return model;
 	}
 	

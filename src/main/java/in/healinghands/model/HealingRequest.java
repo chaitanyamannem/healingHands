@@ -1,5 +1,6 @@
 package in.healinghands.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -21,6 +22,7 @@ public class HealingRequest {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 	private String title;
+	@Column(columnDefinition="varchar(5000)")
 	private String description;
 	private boolean emergency;
 	private boolean underMedication;

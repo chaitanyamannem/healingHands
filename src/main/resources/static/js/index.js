@@ -13,6 +13,9 @@ angular.module('helpingHands', ['ui.router','ngMessages','ui.bootstrap'])
         }).state('register', {
             templateUrl: 'register.html',
             controller: 'register'
+        }).state('healRequests', {
+            templateUrl: 'healRequests.html',
+            controller: 'healRequests'
         }).state('healingRequest', {
             templateUrl: 'healRequest.html',
             controller: 'healingRequest'
@@ -97,6 +100,36 @@ angular.module('helpingHands', ['ui.router','ngMessages','ui.bootstrap'])
         };
     
          
+    })
+    .controller('healRequests', function ($rootScope, $scope, $http, $log) {
+    
+        $scope.healRequests = [];
+        $scope.totalItems = 10;
+        $scope.currentPage = 1;
+    
+        $scope.pageChanged = function() {
+            $log.log('Page changed to: ' + $scope.currentPage);
+            $scope.getHealRequests($scope.currentPage - 1);
+        };
+    
+        $scope.getHealRequests = function(pageNumber){
+            
+            var healRequestsURL = '/healingRequests?pageSize=5&pageNumber='+pageNumber;
+
+            $http.get(healRequestsURL).success(function (data) {               
+                $scope.healRequests = data.healingRequests;
+                $scope.totalItems = data.count;
+            }).error(function () {
+               //TODO
+            });
+            
+        };
+        
+        $scope.getHealRequests(0);
+        $scope.photo = $rootScope.user.photo;
+        
+    
+    
     })
     .controller('register', function ($rootScope, $scope, $http, $location, $timeout) {
     

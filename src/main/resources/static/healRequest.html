@@ -13,7 +13,7 @@
 	</div>
     <div class="form-group">
         <label for="description">Description:</label>
-        <textarea name="description" ng-model="healRequest.description" class="form-control" placeholder="Add details like patient name, age, gender and how long he/she is suffering from the disease." rows="4" ng-minlength="30" ng-maxlength="500" required></textarea>
+        <textarea name="description" ng-model="healRequest.description" class="form-control" placeholder="Add details like patient name, age, gender and how long he/she is suffering from the disease." rows="4" ng-minlength="30" ng-maxlength="5000" required></textarea>
         <div  ng-messages="healRequestForm.description.$error" ng-if="healRequestForm.description.$dirty">
 			<div class="alert alert-danger" role="alert" ng-message="required">This field is required</div>
 			<div class="alert alert-danger" role="alert" ng-message="minlength">Message must be atleast 30 characters</div>

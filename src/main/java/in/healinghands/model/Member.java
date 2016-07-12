@@ -29,7 +29,7 @@ public class Member {
 	@Enumerated(EnumType.STRING)
 	private MemberType memberType;
 	
-	//current max image size is 1048576 bytes or 1.048576
+	//current max image size is 1048576 bytes or 1.048576 mega bytes
 	@Lob
 	private byte[] image;
 	

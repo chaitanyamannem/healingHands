@@ -14,7 +14,7 @@ public class HealingRequestForm extends BaseForm {
 
 	@Size(min=10, max=100)
 	private String title;
-	@Size(min=30, max=500)
+	@Size(min=30, max=5000)
 	private String description;
 	private boolean emergency;
 	private boolean underMedication;	
