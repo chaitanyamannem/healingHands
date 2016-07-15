@@ -10,4 +10,7 @@
     <js>file:@project.basedir@/src/main/resources/static/js/libs/angular-ui-router.js</js>
     <js>file:@project.basedir@/src/main/resources/static/js/libs/ui-bootstrap-tpls.js</js>
    </group>
+    
+    <group name="angular-services">        <js>file:@project.basedir@/src/main/resources/static/healing_requests/healingRequestService.js</js>
+    </group>
 </groups>

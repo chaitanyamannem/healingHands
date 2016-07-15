@@ -1,7 +1,7 @@
-angular.module('helpingHands', ['ui.router','ngMessages','ui.bootstrap'])
-    .config(function ($stateProvider, $httpProvider,$compileProvider) {
-    
-    $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|file|ftp|blob):|data:image\//);
+angular.module('helpingHands', ['ui.router', 'ngMessages', 'ui.bootstrap', 'HealingRequestService'])
+    .config(function ($stateProvider, $httpProvider, $compileProvider) {
+
+        $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|file|ftp|blob):|data:image\//);
 
         $stateProvider.state('index', {
             url: '/',
@@ -27,12 +27,12 @@ angular.module('helpingHands', ['ui.router','ngMessages','ui.bootstrap'])
     .directive('fileModel', ['$parse', function ($parse) {
         return {
             restrict: 'A',
-            link: function(scope, element, attrs) {
+            link: function (scope, element, attrs) {
                 var model = $parse(attrs.fileModel);
                 var modelSetter = model.assign;
 
-                element.bind('change', function(){
-                    scope.$apply(function(){
+                element.bind('change', function () {
+                    scope.$apply(function () {
                         modelSetter(scope, element[0].files[0]);
                     });
                 });
@@ -42,101 +42,96 @@ angular.module('helpingHands', ['ui.router','ngMessages','ui.bootstrap'])
     .controller('home', function ($rootScope, $scope) {
 
         $scope.greeting = $rootScope.user;
-         
+
     })
     .controller('healingRequest', function ($rootScope, $scope, $http) {
-        
+
         $scope.healRequest = {};
         $scope.showDisclaimer = false;
         $scope.showMedicationDetails = false;
-        $scope.setShowMedicationDetails = function(){
+        $scope.setShowMedicationDetails = function () {
             $scope.showMedicationDetails = true;
         }
-        $scope.openDisclaimer = function(){
+        $scope.openDisclaimer = function () {
             $scope.showDisclaimer = true;
             $scope.showMedicationDetails = false;
-        };    
-        $scope.closeDisclaimerAlert = function(){
+        };
+        $scope.closeDisclaimerAlert = function () {
             $scope.showDisclaimer = false;
-        }    
+        }
         $scope.msg = "Pranic Healing is not intended to replace orthodox medicine but rather to complement it. \n If an ailment is severe or symptoms persist, please consult immediately a medical doctor.";
-    
-        $scope.healRequest = function(){
-            
-            if(typeof $scope.healRequest.emergency == "undefined"){
-               $scope.healRequest.emergency = false; 
-            }
-            if(typeof $scope.healRequest.medicationDetails == "undefined"){
-               $scope.healRequest.medicationDetails = null; 
-            }
-            
-            var formData = new FormData();
-            formData.append('title',$scope.healRequest.title);
-            formData.append('description',$scope.healRequest.description);
-            formData.append('patientPhoto', $scope.patientPhoto);
-            formData.append('emergency',$scope.healRequest.emergency);
-            formData.append('underMedication',$scope.healRequest.underMedication);
-            formData.append('medicationDetails',$scope.healRequest.medicationDetails);
-            
-    
-            var request = {
-                    method: 'POST',
-                    url: '/healingRequest',
-                    data: formData,
-                    headers: {
-                        'Content-Type': undefined,
-                        'X-Auth-Token': $rootScope.user.authToken
-                    }
-                };
 
-    
-        
+        $scope.healRequest = function () {
+
+            if (typeof $scope.healRequest.emergency == "undefined") {
+                $scope.healRequest.emergency = false;
+            }
+            if (typeof $scope.healRequest.medicationDetails == "undefined") {
+                $scope.healRequest.medicationDetails = null;
+            }
+
+            var formData = new FormData();
+            formData.append('title', $scope.healRequest.title);
+            formData.append('description', $scope.healRequest.description);
+            formData.append('patientPhoto', $scope.patientPhoto);
+            formData.append('emergency', $scope.healRequest.emergency);
+            formData.append('underMedication', $scope.healRequest.underMedication);
+            formData.append('medicationDetails', $scope.healRequest.medicationDetails);
+
+
+            var request = {
+                method: 'POST',
+                url: '/healingRequest',
+                data: formData,
+                headers: {
+                    'Content-Type': undefined,
+                    'X-Auth-Token': $rootScope.user.authToken
+                }
+            };
+
+
+
             $http(request)
-            .success(function(){
-            })
-            .error(function(){
-            });
+                .success(function () {})
+                .error(function () {});
 
         };
-    
-         
+
+
     })
-    .controller('healRequests', function ($rootScope, $scope, $http, $log) {
-    
+    .controller('healRequests', function ($rootScope, $scope, $http, $log, HealingRequestService) {
+
         $scope.healRequests = [];
         $scope.totalItems = 10;
         $scope.currentPage = 1;
-    
-        $scope.pageChanged = function() {
+
+        $scope.pageChanged = function () {
             $log.log('Page changed to: ' + $scope.currentPage);
             $scope.getHealRequests($scope.currentPage - 1);
         };
-    
-        $scope.getHealRequests = function(pageNumber){
-            
-            var healRequestsURL = '/healingRequests?pageSize=5&pageNumber='+pageNumber;
 
-            $http.get(healRequestsURL).success(function (data) {               
+        $scope.getHealRequests = function (pageNumber) {
+
+            HealingRequestService.getAllHealingRequests(pageNumber).then(function (data) {
                 $scope.healRequests = data.healingRequests;
                 $scope.totalItems = data.count;
-            }).error(function () {
-               //TODO
             });
-            
+
+
         };
-        
+
         $scope.getHealRequests(0);
         $scope.photo = $rootScope.user.photo;
-        
-    
-    
+
+
+
     })
     .controller('register', function ($rootScope, $scope, $http, $location, $timeout) {
-    
+
         $scope.userDetails = {};
         $scope.formErrors = {};
         $scope.formErrors.hasEmail = false;
-        $scope.resetEmailAvailableAlert = function(){
+        $scope.resetEmailAvailableAlert = function () {
             //reset email already taken alert
             $scope.formErrors.hasEmail = false;
         };
@@ -168,11 +163,11 @@ angular.module('helpingHands', ['ui.router','ngMessages','ui.bootstrap'])
         };
 
         $scope.register = function () {
-            var createURL = '/create/?email=' + $scope.userDetails.email
-                + '&password=' + $scope.userDetails.password
-                + '&firstName=' + $scope.userDetails.firstname
-                + '&lastName=' + $scope.userDetails.lastname
-                + '&type=' + $scope.userDetails.memberType;
+            var createURL = '/create/?email=' + $scope.userDetails.email +
+                '&password=' + $scope.userDetails.password +
+                '&firstName=' + $scope.userDetails.firstname +
+                '&lastName=' + $scope.userDetails.lastname +
+                '&type=' + $scope.userDetails.memberType;
             $http.get(createURL).success(function (data) {
                 $rootScope.user = data;
                 $rootScope.authenticated = true;
@@ -183,7 +178,7 @@ angular.module('helpingHands', ['ui.router','ngMessages','ui.bootstrap'])
             });
 
         };
-    	    
+
 
     })
     .controller('navigation',
@@ -214,10 +209,10 @@ angular.module('helpingHands', ['ui.router','ngMessages','ui.bootstrap'])
             $scope.credentials = {};
             $scope.login = function () {
                 authenticate($scope.credentials, function () {
-                    if ($rootScope.authenticated) {          
+                    if ($rootScope.authenticated) {
                         $scope.error = false;
                         $state.go('index');
-                    } else {                     
+                    } else {
                         $scope.error = true;
                         $state.go('login');
                     }
@@ -227,12 +222,12 @@ angular.module('helpingHands', ['ui.router','ngMessages','ui.bootstrap'])
                 $rootScope.authenticated = false;
                 $state.go('login');
                 //TODO: Server implementation
-//                $http.post('logout', {}).success(function () {
-//                    $rootScope.authenticated = false;
-//                    $state.go('login');
-//                }).error(function (data) {
-//                    $rootScope.authenticated = false;
-//                    $rootScope.user = {};
-//                });
+                //                $http.post('logout', {}).success(function () {
+                //                    $rootScope.authenticated = false;
+                //                    $state.go('login');
+                //                }).error(function (data) {
+                //                    $rootScope.authenticated = false;
+                //                    $rootScope.user = {};
+                //                });
             }
         });
